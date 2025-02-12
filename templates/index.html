@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATSBro</title>
+    <meta name="description" content="Free ATS Resume Checker – Upload your PDF or DOCX resume to analyze its ATS compatibility, keyword optimization, and formatting. Improve your chances of passing applicant tracking systems!">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-8 max-w-lg w-full text-center">
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">📄 ATS Resume Checker</h1>
+        <p class="text-gray-600 dark:text-gray-400 mb-6">Upload your resume (PDF or DOCX) to check its ATS score.</p>
+
+        <!-- File Upload Section -->
+        <div class="relative border-2 border-dashed border-gray-300 dark:border-gray-600 p-6 rounded-lg">
+            <input type="file" id="fileInput" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer" onchange="showFileName()">
+            <div class="flex flex-col items-center">
+                <span class="text-gray-500 dark:text-gray-400 text-sm">Drag & Drop or Click to Upload</span>
+                <span id="selectedFile" class="mt-2 text-gray-700 dark:text-gray-300 font-medium"></span>
+            </div>
+        </div>
+
+        <!-- Upload Button -->
+        <button onclick="uploadResume()" class="mt-4 bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition">
+            Analyze Resume
+        </button>
+
+        <!-- Loading Indicator -->
+        <div id="loading" class="hidden mt-4 text-gray-500 dark:text-gray-400 text-sm">
+            ⏳ Processing resume...
+        </div>
+
+        <!-- Result Section -->
+        <div id="result" class="hidden mt-6 bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+            <h2 class="text-lg font-semibold text-gray-800 dark:text-white">✅ Analysis Result</h2>
+            <p class="mt-2 text-gray-700 dark:text-gray-300">Score: <span id="score" class="font-bold text-blue-600 dark:text-blue-400"></span>%</p>
+            <p class="mt-2 text-gray-700 dark:text-gray-300">Keywords Found: <span id="keywords" class="font-medium text-green-600 dark:text-green-400"></span></p>
+        </div>
+    </div>
+
+    <script>
+        function showFileName() {
+            let fileInput = document.getElementById("fileInput");
+            let selectedFile = document.getElementById("selectedFile");
+            if (fileInput.files.length > 0) {
+                selectedFile.textContent = "📎 " + fileInput.files[0].name;
+            } else {
+                selectedFile.textContent = "";
+            }
+        }
+
+        function uploadResume() {
+            let fileInput = document.getElementById("fileInput");
+            let file = fileInput.files[0];
+            let loading = document.getElementById("loading");
+            let result = document.getElementById("result");
+
+            if (!file) {
+                alert("Please select a file!");
+                return;
+            }
+
+            let formData = new FormData();
+            formData.append("resume", file);
+
+            loading.classList.remove("hidden");
+            result.classList.add("hidden");
+
+            fetch("/upload", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.classList.add("hidden");
+
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    result.classList.remove("hidden");
+                    document.getElementById("score").innerText = data.score;
+                    document.getElementById("keywords").innerText = data.keywords_found.join(", ");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                loading.classList.add("hidden");
+                alert("An error occurred. Please try again.");
+            });
+        }
+    </script>
+
+</body>
+</html>
