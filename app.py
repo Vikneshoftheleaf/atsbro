@@ -6,7 +6,10 @@ from google.genai import types
 import requests
 import mimetypes
 import os
-client = genai.Client(api_key="AIzaSyCIYdBLuJe97rNB3gtcsI4RHGUumiioD8Y")
+from dotenv import load_dotenv
+load_dotenv()
+API_KEY = os.getenv("GEMINI_API_KEY")
+client = genai.Client(api_key=API_KEY)
 
 app = Flask(__name__)
 
@@ -29,11 +32,6 @@ def extract_text_from_docx(docx_file):
     doc = docx.Document(docx_file)
     return " ".join([para.text for para in doc.paragraphs])
 
-def analyze_resume(text):
-    """Analyzes the resume text for keyword matching."""
-    found_keywords = [word for word in ATS_KEYWORDS if word.lower() in text.lower()]
-    score = (len(found_keywords) / len(ATS_KEYWORDS)) * 100  # Percentage match
-    return {"score": round(score, 2), "keywords_found": found_keywords}
 
 
 def ai_report(txt_data):
