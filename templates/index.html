@@ -11,44 +11,104 @@
 </head>
 
 <body>
+    
 
-    <section class="grid lg:grid-cols-6 grid-cols-1 gap-4 p-4">
-        <div class="col-span-2 flex flex-col gap-4">
-            <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">📄 ATS Resume Checker</h1>
-            <p class="text-gray-600 dark:text-gray-400 mb-6">Upload your resume (PDF or DOCX) to check its ATS score.
-            </p>
 
-            <!-- File Upload Section -->
-            <div class="relative border-2 border-dashed border-gray-300 dark:border-gray-600 p-6 rounded-lg">
-                <input type="file" id="fileInput" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-                    onchange="showFileName()">
-                <div class="flex flex-col items-center">
-                    <span class="text-gray-500 dark:text-gray-400 text-sm">Drag & Drop or Click to Upload</span>
-                    <span id="selectedFile" class="mt-2 text-gray-700 dark:text-gray-300 font-medium"></span>
+    <nav class="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+        <div class="px-3 py-3 lg:px-5 lg:pl-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center justify-start rtl:justify-end">
+              
+              <a href="/" class="flex ms-2 md:me-24">
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">📄 ATS Resume Checker</h1>
+              </a>
+            </div>
+            
+          </div>
+        </div>
+      </nav>
+      
+      <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-72 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
+         <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800">
+            <div class=" lg:col-span-2 flex flex-col gap-4 p-4">
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Upload your resume (PDF or DOCX) to check its ATS score.
+                </p>
+    
+                <!-- File Upload Section -->
+                <div class="relative border-2 border-dashed border-gray-300 dark:border-gray-600 p-6 rounded-lg">
+                    <input type="file" id="fileInput" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                        onchange="showFileName()">
+                    <div class="flex flex-col items-center">
+                        <span class="text-gray-500 dark:text-gray-400 text-sm">Drag & Drop or Click to Upload</span>
+                        <span id="selectedFile" class="mt-2 text-gray-700 dark:text-gray-300 font-medium"></span>
+                    </div>
                 </div>
+    
+                <!-- Upload Button -->
+                <button onclick="uploadResume()"
+                    class="mt-4 bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition">
+                    Analyze Resume
+                </button>
+    
+                <!-- Loading Indicator -->
+                <div id="loading" class="hidden mt-4 text-gray-500 dark:text-gray-400 text-sm">
+                    ⏳ Processing resume...
+                </div>
+    
+    
             </div>
+            
+         </div>
+      </aside>
+      
+      <div class="lg:p-4 sm:ml-72">
+         <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
+            <div class="grid grid-cols-1 gap-4 mb-4">
+                <section class="grid  grid-cols-1 gap-4 lg:p-4">
+                    <div class="lg:hidden lg:col-span-2 flex flex-col gap-2 pt-2">
+                        <p class="text-gray-600 dark:text-gray-400 mb-6">Upload your resume (PDF or DOCX) to check its ATS score.
+                        </p>
+            
+                        <!-- File Upload Section -->
+                        <div class="relative border-2 border-dashed border-gray-300 dark:border-gray-600 p-6 rounded-lg">
+                            <input type="file" id="fileInput" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                                onchange="showFileName()">
+                            <div class="flex flex-col items-center">
+                                <span class="text-gray-500 dark:text-gray-400 text-sm">Drag & Drop or Click to Upload</span>
+                                <span id="selectedFile" class="mt-2 text-gray-700 dark:text-gray-300 font-medium"></span>
+                            </div>
+                        </div>
+            
+                        <!-- Upload Button -->
+                        <button onclick="uploadResume()"
+                            class="mt-4 bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition">
+                            Analyze Resume
+                        </button>
+            
+                        <!-- Loading Indicator -->
+                        <div id="loading" class="hidden mt-4 text-gray-500 dark:text-gray-400 text-sm">
+                            ⏳ Processing resume...
+                        </div>
+            
+            
+                    </div>
+            
+                    <div class="lg:col-span-4 w-full">
+                        <div id="result" class=" p-4 rounded-lg ">
+                            <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">✅ Analysis Result</h2>
+                            <div id="report" class="flex flex-col gap-6"></div>
+            
+                        </div>
+                </section>
+               
+         </div>
+      </div>
+      
 
-            <!-- Upload Button -->
-            <button onclick="uploadResume()"
-                class="mt-4 bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition">
-                Analyze Resume
-            </button>
-
-            <!-- Loading Indicator -->
-            <div id="loading" class="hidden mt-4 text-gray-500 dark:text-gray-400 text-sm">
-                ⏳ Processing resume...
-            </div>
+</div>
 
 
-        </div>
-
-        <div class="col-span-4">
-            <div id="result" class="hidden mt-6 bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                <h2 class="text-lg font-semibold text-gray-800 dark:text-white">✅ Analysis Result</h2>
-            <div id="report"></div>
-
-        </div>
-    </section>
+    
     <script>
         function showFileName() {
             let fileInput = document.getElementById("fileInput");
@@ -114,33 +174,88 @@
                 });
         }
 
+        const jsonData = {
+            "ats_score": 65,
+            "keyword_analysis": {
+                "matched_keywords": ["Accounting", "Financial Management", "QuickBooks", "MS Office", "Excel", "Payroll", "Budget", "Financial Statements", "Audit", "Information Systems", "Problem Solving"],
+            },
+            "structure_formatting": {
+                "sections_present": ["Summary of Qualifications", "Education", "Professional Accomplishments", "Work History", "Professional Affiliation", "Computer Skills"],
+                "format_issues": [
+                    "Inconsistent formatting: The 'FUNCTIONAL (EXPERIENCED)' at the top is unusual and not ATS-friendly. Consider removing or reformatting.",
+                    "Name formatting: 'IM A. SAMPLE I' is not a standard name format. Fix to a proper name.",
+                    "The 'Professional Accomplishments' section is not ideal for ATS. Information should be integrated into work experience."
+                ],
+                "bullet_points_used": true
+            },
+            "work_experience": {
+                "jobs_listed": 4,
+                "experience_quality": "Good. Job titles are relevant to accounting and bookkeeping roles. However, responsibilities and achievements are vague and lacking specific details.",
+                "quantified_achievements": "Few. While some accomplishments are mentioned, they lack quantifiable results (e.g., cost savings, efficiency improvements, percentage increases).",
+                "missing_details": [
+                    "More specific job responsibilities and accomplishments for each role are needed. Use the STAR method (Situation, Task, Action, Result) to elaborate.",
+                    "Dates in work history sections should be updated to reflect full and current years"
+                ]
+            },
+            "skills_assessment": {
+                "hard_skills": ["Accounting", "Financial Management", "QuickBooks", "MS Office (Word, Excel, PowerPoint, Outlook)", "MS Access", "SQL", "Visual Basic", "C++", "Payroll Processing", "Financial Reporting", "Auditing"],
+                "soft_skills": ["Analytical Skills", "Problem Solving", "Organization", "Resourcefulness"],
+                "relevance": "High. The listed skills are relevant to accounting and bookkeeping roles."
+            },
+            "grammar_readability": {
+                "spelling_errors": 0,
+                "clarity_score": 70,
+                "passive_voice_usage": "Moderate. Some sentences could be rephrased for more active voice."
+            },
+            "recommendations": [
+                "Rename the 'Professional Accomplishments' section to 'Experience' and merge its content into the Work History, providing more context and quantifiable achievements for each role.",
+                "Use the STAR method to describe accomplishments in the Work History section. Quantify achievements whenever possible (e.g., 'Reduced processing time by 15%').",
+                "Replace functional resume style with reverse chronological resume style.",
+                "Ensure consistent date formatting throughout the resume.",
+                "Update the resume with current job experience and projects completed.",
+                "Remove the leading 'FUNCTIONAL (EXPERIENCED)' text.",
+                "Fix the name format to a standard full name.",
+                "Tailor the resume to specific job descriptions by incorporating relevant keywords."
+            ],
+            "projected_score": 85
+        };
         function renderReport(data) {
             const reportContainer = document.getElementById('report');
             reportContainer.innerHTML = `
                 <div class="bg-blue-50 p-4 rounded-lg">
                     <h2 class="text-lg font-semibold">📊 ATS Score: <span class="text-blue-600">${data.ats_score}%</span></h2>
+                    <hr class="my-4" />
                     <p class="text-gray-600">${data.ats_score >= 80 ? "✅ Strong Resume!" : "⚠️ Needs Improvement"}</p>
                 </div>
 
                 <div class="bg-green-50 p-4 rounded-lg">
                     <h2 class="text-lg font-semibold">🔍 Keyword Analysis</h2>
+                    <hr class="my-4" />
                     <p><strong>Matched Keywords:</strong> ${data.keyword_analysis.matched_keywords.join(", ")}</p>
                 </div>
 
                 <div class="bg-yellow-50 p-4 rounded-lg">
                     <h2 class="text-lg font-semibold">📂 Structure & Formatting</h2>
+                    <hr class="my-4" />
                     <p><strong>Sections Present:</strong> ${data.structure_formatting.sections_present.join(", ")}</p>
+                    <hr class="my-4" />
                     <p><strong>Format Issues:</strong></p>
                     <ul class="list-disc pl-6 text-red-600">
                         ${data.structure_formatting.format_issues.map(issue => `<li>${issue}</li>`).join("")}
                     </ul>
+                    <hr class="my-4" />
+
                     <p><strong>Bullet Points Used:</strong> ${data.structure_formatting.bullet_points_used ? "✅ Yes" : "❌ No"}</p>
                 </div>
 
                 <div class="bg-purple-50 p-4 rounded-lg">
                     <h2 class="text-lg font-semibold">💼 Work Experience</h2>
+                    <hr class="my-4" />
                     <p><strong>Jobs Listed:</strong> ${data.work_experience.jobs_listed}</p>
+                    <hr class="my-4" />
                     <p><strong>Experience Quality:</strong> ${data.work_experience.experience_quality}</p>
+                                        <hr class="my-4" />
+
                     <p><strong>Missing Details:</strong></p>
                     <ul class="list-disc pl-6 text-red-600">
                         ${data.work_experience.missing_details.map(detail => `<li>${detail}</li>`).join("")}
@@ -149,13 +264,18 @@
 
                 <div class="bg-indigo-50 p-4 rounded-lg">
                     <h2 class="text-lg font-semibold">🛠️ Skills Assessment</h2>
+                    <hr class="my-4" />
                     <p><strong>Hard Skills:</strong> ${data.skills_assessment.hard_skills.join(", ")}</p>
+                    <hr class="my-4" />
                     <p><strong>Soft Skills:</strong> ${data.skills_assessment.soft_skills.join(", ")}</p>
+                    <hr class="my-4" />
                     <p><strong>Relevance:</strong> ${data.skills_assessment.relevance}</p>
                 </div>
 
                 <div class="bg-red-50 p-4 rounded-lg">
                     <h2 class="text-lg font-semibold">📌 Recommendations</h2>
+                    <hr class="my-4" />
+
                     <ul class="list-disc pl-6">
                         ${data.recommendations.map(rec => `<li>${rec}</li>`).join("")}
                     </ul>
@@ -166,6 +286,7 @@
                 </div>
             `;
         }
+        renderReport(jsonData)
     </script>
 
 </body>
