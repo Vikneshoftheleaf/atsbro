@@ -1,45 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ATSBro</title>
-    <meta name="description" content="Free ATS Resume Checker – Upload your PDF or DOCX resume to analyze its ATS compatibility, keyword optimization, and formatting. Improve your chances of passing applicant tracking systems!">
+    <meta name="description"
+        content="Free ATS Resume Checker – Upload your PDF or DOCX resume to analyze its ATS compatibility, keyword optimization, and formatting. Improve your chances of passing applicant tracking systems!">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 flex items-center justify-center min-h-screen">
 
-    <div class="bg-white dark:bg-gray-800 shadow-lg rounded-xl p-8 max-w-lg w-full text-center">
-        <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">📄 ATS Resume Checker</h1>
-        <p class="text-gray-600 dark:text-gray-400 mb-6">Upload your resume (PDF or DOCX) to check its ATS score.</p>
+<body>
 
-        <!-- File Upload Section -->
-        <div class="relative border-2 border-dashed border-gray-300 dark:border-gray-600 p-6 rounded-lg">
-            <input type="file" id="fileInput" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer" onchange="showFileName()">
-            <div class="flex flex-col items-center">
-                <span class="text-gray-500 dark:text-gray-400 text-sm">Drag & Drop or Click to Upload</span>
-                <span id="selectedFile" class="mt-2 text-gray-700 dark:text-gray-300 font-medium"></span>
+    <section class="grid lg:grid-cols-6 grid-cols-1 gap-4 p-4">
+        <div class="col-span-2 flex flex-col gap-4">
+            <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">📄 ATS Resume Checker</h1>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">Upload your resume (PDF or DOCX) to check its ATS score.
+            </p>
+
+            <!-- File Upload Section -->
+            <div class="relative border-2 border-dashed border-gray-300 dark:border-gray-600 p-6 rounded-lg">
+                <input type="file" id="fileInput" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                    onchange="showFileName()">
+                <div class="flex flex-col items-center">
+                    <span class="text-gray-500 dark:text-gray-400 text-sm">Drag & Drop or Click to Upload</span>
+                    <span id="selectedFile" class="mt-2 text-gray-700 dark:text-gray-300 font-medium"></span>
+                </div>
             </div>
+
+            <!-- Upload Button -->
+            <button onclick="uploadResume()"
+                class="mt-4 bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition">
+                Analyze Resume
+            </button>
+
+            <!-- Loading Indicator -->
+            <div id="loading" class="hidden mt-4 text-gray-500 dark:text-gray-400 text-sm">
+                ⏳ Processing resume...
+            </div>
+
+
         </div>
 
-        <!-- Upload Button -->
-        <button onclick="uploadResume()" class="mt-4 bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 transition">
-            Analyze Resume
-        </button>
+        <div class="col-span-4">
+            <div id="result" class="hidden mt-6 bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-white">✅ Analysis Result</h2>
+            <div id="report"></div>
 
-        <!-- Loading Indicator -->
-        <div id="loading" class="hidden mt-4 text-gray-500 dark:text-gray-400 text-sm">
-            ⏳ Processing resume...
         </div>
-
-        <!-- Result Section -->
-        <div id="result" class="hidden mt-6 bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-            <h2 class="text-lg font-semibold text-gray-800 dark:text-white">✅ Analysis Result</h2>
-            <p class="mt-2 text-gray-700 dark:text-gray-300">Score: <span id="score" class="font-bold text-blue-600 dark:text-blue-400"></span>%</p>
-            <p class="mt-2 text-gray-700 dark:text-gray-300">Keywords Found: <span id="keywords" class="font-medium text-green-600 dark:text-green-400"></span></p>
-        </div>
-    </div>
-
+    </section>
     <script>
         function showFileName() {
             let fileInput = document.getElementById("fileInput");
@@ -72,25 +81,93 @@
                 method: "POST",
                 body: formData
             })
-            .then(response => response.json())
-            .then(data => {
-                loading.classList.add("hidden");
+                .then(response => response.json())
+                .then(data => {
 
-                if (data.error) {
-                    alert(data.error);
-                } else {
-                    result.classList.remove("hidden");
-                    document.getElementById("score").innerText = data.score;
-                    document.getElementById("keywords").innerText = data.keywords_found.join(", ");
-                }
-            })
-            .catch(error => {
-                console.error("Error:", error);
-                loading.classList.add("hidden");
-                alert("An error occurred. Please try again.");
-            });
+                    // Extract JSON content by removing ```json and ```
+                    const jsonString = data.replace("```json", '').replace("```", '');
+
+                    // Parse into a valid JSON object
+                    const validJson = JSON.parse(jsonString);
+
+                    console.log(validJson)
+                    // Convert back to a well-formatted JSON string
+                    //console.log(JSON.stringify(validJson, null, 4));
+
+
+                    loading.classList.add("hidden");
+
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        result.classList.remove("hidden");
+                        renderReport(validJson)
+                        //document.getElementById("report").innerText = validJson;
+                        //document.getElementById("score").innerText = data.score;
+                        //document.getElementById("keywords").innerText = data.keywords_found.join(", ");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    loading.classList.add("hidden");
+                    alert("An error occurred. Please try again.");
+                });
+        }
+
+        function renderReport(data) {
+            const reportContainer = document.getElementById('report');
+            reportContainer.innerHTML = `
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h2 class="text-lg font-semibold">📊 ATS Score: <span class="text-blue-600">${data.ats_score}%</span></h2>
+                    <p class="text-gray-600">${data.ats_score >= 80 ? "✅ Strong Resume!" : "⚠️ Needs Improvement"}</p>
+                </div>
+
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h2 class="text-lg font-semibold">🔍 Keyword Analysis</h2>
+                    <p><strong>Matched Keywords:</strong> ${data.keyword_analysis.matched_keywords.join(", ")}</p>
+                </div>
+
+                <div class="bg-yellow-50 p-4 rounded-lg">
+                    <h2 class="text-lg font-semibold">📂 Structure & Formatting</h2>
+                    <p><strong>Sections Present:</strong> ${data.structure_formatting.sections_present.join(", ")}</p>
+                    <p><strong>Format Issues:</strong></p>
+                    <ul class="list-disc pl-6 text-red-600">
+                        ${data.structure_formatting.format_issues.map(issue => `<li>${issue}</li>`).join("")}
+                    </ul>
+                    <p><strong>Bullet Points Used:</strong> ${data.structure_formatting.bullet_points_used ? "✅ Yes" : "❌ No"}</p>
+                </div>
+
+                <div class="bg-purple-50 p-4 rounded-lg">
+                    <h2 class="text-lg font-semibold">💼 Work Experience</h2>
+                    <p><strong>Jobs Listed:</strong> ${data.work_experience.jobs_listed}</p>
+                    <p><strong>Experience Quality:</strong> ${data.work_experience.experience_quality}</p>
+                    <p><strong>Missing Details:</strong></p>
+                    <ul class="list-disc pl-6 text-red-600">
+                        ${data.work_experience.missing_details.map(detail => `<li>${detail}</li>`).join("")}
+                    </ul>
+                </div>
+
+                <div class="bg-indigo-50 p-4 rounded-lg">
+                    <h2 class="text-lg font-semibold">🛠️ Skills Assessment</h2>
+                    <p><strong>Hard Skills:</strong> ${data.skills_assessment.hard_skills.join(", ")}</p>
+                    <p><strong>Soft Skills:</strong> ${data.skills_assessment.soft_skills.join(", ")}</p>
+                    <p><strong>Relevance:</strong> ${data.skills_assessment.relevance}</p>
+                </div>
+
+                <div class="bg-red-50 p-4 rounded-lg">
+                    <h2 class="text-lg font-semibold">📌 Recommendations</h2>
+                    <ul class="list-disc pl-6">
+                        ${data.recommendations.map(rec => `<li>${rec}</li>`).join("")}
+                    </ul>
+                </div>
+
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h2 class="text-lg font-semibold">📈 Projected ATS Score: <span class="text-green-600">${data.projected_score}%</span></h2>
+                </div>
+            `;
         }
     </script>
 
 </body>
+
 </html>
